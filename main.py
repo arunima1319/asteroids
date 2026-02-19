@@ -7,6 +7,8 @@ from circleshape import CircleShape
 from asteroidfield import AsteroidField
 from asteroids import Asteroid
 from shot import Shot
+from highscore import beat_high_score 
+
 
 def main():
     pygame.init()
@@ -28,6 +30,7 @@ def main():
     
     Shot.containers = (shots, updatable, drawable)
     
+    score = 0
 
     while (1):
         log_state()
@@ -37,12 +40,22 @@ def main():
         screen.fill("black")
         
         updatable.update(dt)  #instead of individually calling the update method on each Player object
-        
+        score += 1 
+
         for thing in asteroids:
             if thing.collides_with(player):
                 log_event ("player_hit")
                 print("Game Over!")
+
+                with open ("current_score.txt", "w") as f:
+                    f.write(f"{score}") 
+                score, exclamation = beat_high_score(score)
+                print(score)
+                print(exclamation)
+                
+                
                 sys.exit() #ending the game
+
             for each in shots: 
                 if thing.collides_with(each):
                     log_event("asteroid_shot")
